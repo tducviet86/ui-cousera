@@ -1,7 +1,6 @@
 "use client";
 
 import FormInput from "@/components/Subject/create/FormInput";
-import FormSelect from "@/components/Subject/create/FormSelect";
 import SectionTitle from "@/components/Subject/create/SectionTitle";
 import UploadSubjectImage from "@/components/Subject/create/UploadSubjectImage";
 import { loadTeachersApi, Teacher } from "@/services/teacher.service";
@@ -41,7 +40,10 @@ type Props = {
   onNext: (data: CreateSubjectStep1Data) => void;
 };
 
-export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
+export default function CreateSubjectForm({
+  defaultValues,
+  onNext,
+}: Props) {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [imageAvatar, setImageAvatar] = useState(
     defaultValues?.IMAGE_AVATAR || ""
@@ -58,9 +60,11 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
       COURSE_NAME_EN: defaultValues?.COURSE_NAME_EN || "",
       TEACHER_ID: defaultValues?.LIST_TEACHER_USER_ID?.[0] || "",
       TOTAL_NUMBER_OF_STUDY_UNITS:
-        defaultValues?.TOTAL_NUMBER_OF_STUDY_UNITS || 0,
+        defaultValues?.TOTAL_NUMBER_OF_STUDY_UNITS || 1,
       OUTCOME_TEXT: defaultValues?.LIST_OUTCOME_TEXT?.[0]?.OUTCOME_TEXT || "",
       DESCRIPTION: defaultValues?.DESCRIPTION || "",
+      STUDY_UNIT_UOM_NAME:
+        defaultValues?.STUDY_UNIT_UOM_NAME || "credit",
     },
   });
 
@@ -87,14 +91,16 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
       DESCRIPTION_EN: "",
       LIST_OUTCOME_TEXT: data.OUTCOME_TEXT
         ? [
-          {
-            OUTCOME_TEXT: data.OUTCOME_TEXT,
-            OUTCOME_TEXT_EN: "",
-          },
-        ]
+            {
+              OUTCOME_TEXT: data.OUTCOME_TEXT,
+              OUTCOME_TEXT_EN: "",
+            },
+          ]
         : [],
       LIST_TEACHER_USER_ID: [data.TEACHER_ID],
-      TOTAL_NUMBER_OF_STUDY_UNITS: Number(data.TOTAL_NUMBER_OF_STUDY_UNITS),
+      TOTAL_NUMBER_OF_STUDY_UNITS: Number(
+        data.TOTAL_NUMBER_OF_STUDY_UNITS
+      ),
       STUDY_UNIT_UOM_NAME: data.STUDY_UNIT_UOM_NAME,
     };
 
@@ -104,32 +110,68 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex h-full flex-col rounded-2xl bg-white px-8 py-6 shadow-sm"
+      className="
+        mx-auto
+        flex
+        w-full
+        max-w-7xl
+        flex-col
+        rounded-2xl
+        bg-white
+        p-4
+        shadow-sm
+
+        sm:p-5
+
+        lg:max-h-[calc(100vh-110px)]
+        lg:overflow-y-auto
+        lg:p-6
+
+        2xl:max-h-none
+        2xl:overflow-visible
+        2xl:p-7
+      "
     >
-      <div className="mb-4 flex items-start justify-between">
+      {/* HEADER */}
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-xl font-bold text-slate-800">
+          <h1 className="text-lg font-bold text-slate-800 sm:text-xl">
             Thêm mới môn học
           </h1>
-          <p className="mt-1 text-sm text-slate-500">
+
+          <p className="mt-1 text-xs text-slate-500 sm:text-sm">
             Vui lòng cung cấp đầy đủ thông tin để tạo môn học mới.
           </p>
         </div>
 
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-2xl">
+        <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-2xl sm:flex">
           🎓
         </div>
       </div>
 
+      {/* IMAGE */}
       <UploadSubjectImage onUploaded={setImageAvatar} />
 
+      {/* BASIC INFO */}
       <SectionTitle
         icon={<BookOpen size={16} />}
         title="Thông tin cơ bản"
         color="text-emerald-500"
       />
 
-      <div className="mt-4 grid grid-cols-3 gap-x-6 gap-y-4">
+      <div
+        className="
+          mt-4
+          grid
+          grid-cols-1
+          gap-x-5
+          gap-y-3
+
+          lg:grid-cols-2
+
+          2xl:grid-cols-3
+        "
+      >
         <FormInput
           label="Mã môn học *"
           placeholder="Nhập mã môn học"
@@ -140,7 +182,7 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
         />
 
         <FormInput
-          label="Tên môn học (Tiếng Việt) *"
+          label="Tên môn học Tiếng Việt *"
           placeholder="Nhập tên môn học"
           {...register("COURSE_NAME", {
             required: "Vui lòng nhập tên môn học",
@@ -149,12 +191,14 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
         />
 
         <FormInput
-          label="Tên môn học (Tiếng Anh)"
+          label="Tên môn học Tiếng Anh"
           placeholder="Nhập tên môn học"
           {...register("COURSE_NAME_EN")}
         />
+
+        {/* TEACHER */}
         <div className="flex flex-col">
-          <label className="mb-1 block h-5 text-sm font-bold leading-5 text-slate-600">
+          <label className="mb-1 h-5 text-sm font-bold text-slate-600">
             Gắn thẻ người dạy chính *
           </label>
 
@@ -162,7 +206,18 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
             {...register("TEACHER_ID", {
               required: "Vui lòng chọn giảng viên",
             })}
-            className="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm leading-none text-slate-600 outline-none focus:border-emerald-400"
+            className="
+              h-11
+              w-full
+              rounded-xl
+              border
+              border-slate-200
+              px-4
+              text-sm
+              text-slate-600
+              outline-none
+              focus:border-emerald-400
+            "
           >
             <option value="">Chọn giảng viên</option>
 
@@ -182,6 +237,7 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
           </div>
         </div>
 
+        {/* STUDY UNIT */}
         <FormInput
           label="Số đơn vị học tập *"
           placeholder="Nhập số ĐVHT"
@@ -197,8 +253,9 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
           error={errors.TOTAL_NUMBER_OF_STUDY_UNITS?.message}
         />
 
+        {/* UNIT TYPE */}
         <div className="flex flex-col">
-          <label className="mb-1 block h-5 text-sm font-bold leading-5 text-slate-600">
+          <label className="mb-1 h-5 text-sm font-bold text-slate-600">
             Đơn vị học tập *
           </label>
 
@@ -206,7 +263,18 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
             {...register("STUDY_UNIT_UOM_NAME", {
               required: "Vui lòng chọn đơn vị",
             })}
-            className="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm outline-none focus:border-emerald-400"
+            className="
+              h-11
+              w-full
+              rounded-xl
+              border
+              border-slate-200
+              px-4
+              text-sm
+              text-slate-600
+              outline-none
+              focus:border-emerald-400
+            "
           >
             <option value="credit">Tín chỉ</option>
             <option value="unit">Unit</option>
@@ -215,7 +283,7 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
 
           <div className="h-5">
             {errors.STUDY_UNIT_UOM_NAME && (
-              <p className="text-xs text-red-500">
+              <p className="mt-1 text-xs text-red-500">
                 {errors.STUDY_UNIT_UOM_NAME.message}
               </p>
             )}
@@ -223,16 +291,17 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
         </div>
       </div>
 
+      {/* OUTCOME */}
       <div className="mt-5">
         <SectionTitle
           icon={<BookOpen size={16} />}
-          title="Kết quả đầu ra của Môn học"
+          title="Kết quả đầu ra của môn học"
           color="text-sky-500"
         />
 
         <div className="mt-3">
           <FormInput
-            label="Kết quả Đầu ra của Môn học"
+            label="Kết quả đầu ra của môn học"
             placeholder="Nhập mô tả"
             {...register("OUTCOME_TEXT")}
           />
@@ -246,6 +315,7 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
         </button>
       </div>
 
+      {/* DESCRIPTION */}
       <div className="mt-5">
         <SectionTitle
           icon={<GraduationCap size={16} />}
@@ -256,21 +326,53 @@ export default function CreateSubjectForm({ defaultValues, onNext }: Props) {
         <textarea
           placeholder="Nhập mô tả môn học"
           {...register("DESCRIPTION")}
-          className="mt-3 h-20 w-full resize-none rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none placeholder:text-slate-400 focus:border-emerald-400"
+          className="
+            mt-3
+            h-24
+            w-full
+            resize-none
+            rounded-xl
+            border
+            border-slate-200
+            px-4
+            py-3
+            text-sm
+            outline-none
+            placeholder:text-slate-400
+            focus:border-emerald-400
+          "
         />
       </div>
 
-      <div className="mt-auto flex justify-end gap-3 pt-4">
+      {/* BUTTON */}
+      <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <button
           type="button"
-          className="rounded-xl border px-6 py-2 text-sm font-semibold text-slate-500"
+          className="
+            rounded-xl
+            border
+            border-slate-200
+            px-6
+            py-2
+            text-sm
+            font-semibold
+            text-slate-500
+          "
         >
           Hủy bỏ
         </button>
 
         <button
           type="submit"
-          className="rounded-xl bg-violet-600 px-6 py-2 text-sm font-semibold text-white"
+          className="
+            rounded-xl
+            bg-violet-600
+            px-6
+            py-2
+            text-sm
+            font-semibold
+            text-white
+          "
         >
           Tiếp tục →
         </button>

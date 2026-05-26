@@ -14,7 +14,7 @@ const SubjectLayout = ({ children }: Props) => {
         <Sidebar />
         <div className="flex-1 flex flex-col">
           <TopBar />
-          <main className="flex-1 p-6">
+          <main className="flex-1">
             <div className="h-full bg-[#f0f0f0] rounded-lg  text-gray-500">
               {children}
             </div>

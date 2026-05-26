@@ -5,7 +5,7 @@ import axios, {
 } from "axios";
 
 const api = axios.create({
-  baseURL:  "http://localhost:5001/api",
+  baseURL: "http://localhost:5001/api",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -30,12 +30,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("token");
-        window.location.href = "/login";
-      }
-    }
+    console.log("API ERROR:", {
+      url: error.config?.url,
+      status: error.response?.status,
+      data: error.response?.data,
+    });
 
     return Promise.reject(error);
   }

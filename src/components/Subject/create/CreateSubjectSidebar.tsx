@@ -20,7 +20,7 @@ export default function CreateSubjectSidebar({ currentStep, onBack }: Props) {
           type="button"
           onClick={onBack}
           disabled={currentStep === 1}
-          className="flex items-center gap-2 text-sm text-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex items-center gap-2 text-sm text-slate-500 poin disabled:opacity-40"
         >
           <ArrowLeft size={16} />
           Quay lại

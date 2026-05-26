@@ -26,12 +26,9 @@ export default function UploadSubjectImage({
 
     try {
       setLoading(true);
-
       setPreview(URL.createObjectURL(file));
 
       const result = await uploadSubjectImageApi(file);
-
-      console.log("Upload result:", result);
 
       const imageId = result?.data?.[0]?._id || result?.[0]?._id || result?._id;
 
@@ -49,7 +46,7 @@ export default function UploadSubjectImage({
   return (
     <div
       onClick={handleChooseFile}
-      className="mb-2 cursor-pointer rounded-2xl border border-dashed border-emerald-300 bg-emerald-50/40 p-2"
+      className="mb-4 cursor-pointer rounded-2xl border border-dashed border-emerald-300 bg-emerald-50/40 p-3 transition hover:bg-emerald-50 sm:p-4"
     >
       <input
         ref={inputRef}
@@ -59,27 +56,33 @@ export default function UploadSubjectImage({
         onChange={handleUpload}
       />
 
-      <div className="flex items-center gap-3">
-        <div className="relative flex h-25 w-25 items-center justify-center overflow-hidden rounded-xl bg-linear-to-br from-emerald-300 to-emerald-500 text-white">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative flex h-24 w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-emerald-300 to-emerald-500 text-white sm:h-20 sm:w-20 lg:h-24 lg:w-24">
           {preview ? (
-            <img src={preview} className="h-full w-full object-cover" />
+            <img
+              src={preview}
+              alt="Subject preview"
+              className="h-full w-full object-cover"
+            />
           ) : (
-            <ImageIcon size={36} />
+            <ImageIcon size={34} />
           )}
 
           <button
             type="button"
-            className="absolute -bottom-2 -left-2 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-white"
+            className="absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-emerald-600 text-white shadow"
           >
-            <Plus size={12} />
+            <Plus size={14} />
           </button>
         </div>
 
-        <div>
-          <p className="text-2xl font-semibold text-slate-700">
+        <div className="min-w-0">
+          <p className="text-base font-semibold text-slate-700 sm:text-lg">
             {loading ? "Đang upload..." : "Hình ảnh đại diện"}
           </p>
-          <p className="mt-1 text-[18px] text-slate-500">Tối thiểu 5Mb</p>
+          <p className="mt-1 text-sm text-slate-500">
+            Chọn ảnh đại diện cho môn học
+          </p>
         </div>
       </div>
     </div>
